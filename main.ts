@@ -1,16 +1,14 @@
-const path = require('path')
-const glob = require('glob')
-const electron = require('electron')
 const autoUpdater = require('./auto-updater')
 
-const BrowserWindow = electron.BrowserWindow
-const app = electron.app
+import {BrowserWindow, app} from 'electron'
+import * as glob from 'glob'
+import * as path from 'path'
 
 const debug = /--debug/.test(process.argv[2])
 
 if (process.mas) app.setName('Electron APIs')
 
-var mainWindow = null
+var mainWindow: Electron.BrowserWindow|null = null
 
 function initialize () {
   var shouldQuit = makeSingleInstance()
@@ -23,7 +21,8 @@ function initialize () {
       width: 1080,
       minWidth: 680,
       height: 840,
-      title: app.getName()
+      title: app.getName(),
+      icon: undefined
     }
 
     if (process.platform === 'linux') {
