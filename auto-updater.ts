@@ -1,12 +1,12 @@
-const app = require('electron').app
-const autoUpdater = require('electron').autoUpdater
-const ChildProcess = require('child_process')
-const Menu = require('electron').Menu
-const path = require('path')
+import {app} from 'electron'
+import {autoUpdater} from 'electron'
+import * as ChildProcess from 'child_process'
+import {Menu} from 'electron'
+import * as path from 'path'
 
 var state = 'checking'
 
-exports.initialize = function () {
+exports.initialize = function () : void {
   if (process.mas) return
 
   autoUpdater.on('checking-for-update', function () {
@@ -41,13 +41,14 @@ exports.initialize = function () {
 exports.updateMenu = function () {
   if (process.mas) return
 
-  var menu = Menu.getApplicationMenu()
+  var menu : Electron.Menu = Menu.getApplicationMenu()
   if (!menu) return
 
   menu.items.forEach(function (item) {
     if (item.submenu) {
-      item.submenu.items.forEach(function (item) {
-        switch (item.key) {
+      const submenu: Electron.Menu = <Electron.Menu>item.submenu;
+      submenu.items.forEach(function (item: Electron.MenuItem) {
+        switch ((<any>item).key) {
           case 'checkForUpdate':
             item.visible = state === 'no-update'
             break
@@ -79,10 +80,10 @@ exports.removeShortcut = function (callback) {
   ], callback)
 }
 
-function spawnUpdate (args, callback) {
-  var updateExe = path.resolve(path.dirname(process.execPath), '..', 'Update.exe')
-  var stdout = ''
-  var spawned = null
+function spawnUpdate (args, callback): void {
+  var updateExe: string = path.resolve(path.dirname(process.execPath), '..', 'Update.exe')
+  var stdout: string = ''
+  var spawned : ChildProcess.ChildProcess|null = null
 
   try {
     spawned = ChildProcess.spawn(updateExe, args)
@@ -94,7 +95,7 @@ function spawnUpdate (args, callback) {
 
   var error = null
 
-  spawned.stdout.on('data', function (data) { stdout += data })
+  spawned.stdout.on('data', function (data: string) { stdout += data })
 
   spawned.on('error', function (processError) {
     if (!error) error = processError
